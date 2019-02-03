@@ -18,9 +18,12 @@
       java.io.StringReader.
       html/html-resource))
 
+(defn get-monster-list [content]
+  (html/select content [:body :div.monster-list :div.monster-template]))
+
 (def pag1 (open-page 1))
 (def content (read-html pag1))
-(def monster-list (html/select content [:body :div.monster-list :div.monster-template]))
+(def monster-list (get-monster-list content))
 
 (defn get-name [monster]
   (-> monster
@@ -42,25 +45,32 @@
       (html/select [:p.race-property :a html/text])
       last))
 
+(defn to-int [string]
+  (Integer. (str/replace string "," "")))
+
 (defn get-lv [monster]
   (-> monster
       (html/select [:div.m-attributes :table (html/nth-child 1) :> [:td (html/nth-child 2)] html/text])
-      first))
+      first
+      to-int))
 
 (defn get-hp [monster]
   (-> monster
       (html/select [:div.m-attributes :table (html/nth-child 2) :> [:td (html/nth-child 2)] html/text])
-      first))
+      first
+      to-int))
 
 (defn get-base [monster]
   (-> monster
       (html/select [:div.m-attributes :table (html/nth-child 3) :> [:td (html/nth-child 2)] html/text])
-      first))
+      first
+      to-int))
 
 (defn get-job [monster]
   (-> monster
       (html/select [:div.m-attributes :table (html/nth-child 4) :> [:td (html/nth-child 2)] html/text])
-      first))
+      first
+      to-int))
 
 (defn get-info [monster]
   {:name (get-name monster)
@@ -74,3 +84,15 @@
 
 (mapv get-info monster-list)
 
+
+
+(defn get-all-monsters [init end]
+  (->> (range init end)
+       (map open-page)
+       (map read-html)
+       (map get-monster-list)
+       (reduce concat)
+       (map get-info)))
+
+(def all-monsters (get-all-monsters 1 22))
+(map get-info all-monsters)
