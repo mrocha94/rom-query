@@ -95,4 +95,3 @@
        (map get-info)))
 
 (def all-monsters (get-all-monsters 1 22))
-(map get-info all-monsters)

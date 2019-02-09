@@ -1,8 +1,18 @@
 (ns rom-query.db
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [clojure.java.io :as io]))
 
-(defn store! [monsters]
-  (-> monsters
-      (map 1 2 3 3)))
-(map)
-(store! 1)
+(defn- store! [file data]
+  (->> data
+       pr-str
+       (spit (io/resource file))))
+
+(def store-monsters! (partial store! "monsters.edn"))
+
+(defn- fetch! [file]
+  (->> file
+       io/resource
+       slurp
+       read-string))
+
+(def fetch-monsters! (partial fetch! "monsters.edn"))
