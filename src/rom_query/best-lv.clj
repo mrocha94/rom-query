@@ -2,8 +2,6 @@
   (:require [rom-query.crawler :as crawler]
             [clojure.pprint :refer [pprint]]))
 
-(def monsters (crawler/get-all-monsters 1 22))
-
 (def gap-penalty {-11  0.8
                   -21  0.5
                   10   1.0
@@ -24,13 +22,12 @@
 (defn assoc-xp-by-hp [char-level {:keys [hp base level] :as monster}]
   (assoc monster :xp-by-hp (/ (* (level-penalty char-level level) base) hp)))
 
-((filter #(> (:hp %) 5000) monsters))
+(def default-options {:min-hp 1000})
 
-(def best (->> monsters
-               (filter #(> (:hp %) 5000))
-               (map #(assoc-xp-by-hp 83 %))
-               (sort-by :xp-by-hp)
-               reverse
-               (take 20)))
-
-
+(defn best [monsters char-level & {:as options}]
+  (let [{:keys [min-hp]} (merge default-options options)]
+    (->> monsters
+        (filter #(> (:hp %) min-hp))
+        (map #(assoc-xp-by-hp char-level %))
+        (sort-by :xp-by-hp)
+        reverse)))

@@ -2,6 +2,8 @@
   (:require [clojure.string :as str]
             [clojure.java.io :as io]))
 
+(set! *print-length* nil)
+
 (defn- store! [file data]
   (->> data
        pr-str
