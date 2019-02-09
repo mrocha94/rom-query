@@ -1,6 +1,2 @@
-(ns rom-query.core)
-
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+(ns rom-query.core
+  (:required [rom-query.crawler :as crawler]))
