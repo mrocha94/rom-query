@@ -2,6 +2,15 @@
   (:require [rom-query.crawler :as crawler]
             [clojure.pprint :refer [pprint]]))
 
+(def properties #{"Poison" "Shadow" "Wind" "Undead" "Fire" "Water" "Earth" "Holy" "Ghost" "Neutral"})
+
+(def damage [{:property "Fire"
+              :damage   1000
+              :delay    0.9}
+             {:property "Water"
+              :damage   1000
+              :delay    0.9}])
+
 (def gap-penalty {-11  0.8
                   -21  0.5
                   10   1.0
@@ -27,7 +36,7 @@
 (defn best [monsters char-level & {:as options}]
   (let [{:keys [min-hp]} (merge default-options options)]
     (->> monsters
-        (filter #(> (:hp %) min-hp))
-        (map #(assoc-xp-by-hp char-level %))
-        (sort-by :xp-by-hp)
-        reverse)))
+         (filter #(> (:hp %) min-hp))
+         (map #(assoc-xp-by-hp char-level %))
+         (sort-by :xp-by-hp)
+         reverse)))
